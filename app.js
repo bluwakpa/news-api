@@ -1,17 +1,34 @@
-const apiKey = "833ea1b9d7mshbef97797dff363dp1d9ac4jsna2801a24e32d";
+'use strict';
 
-function getNews() {
-  const url = "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/search/NewsSearchAPI?q=Tesla";
-  
- const options = {
-    headers: new Headers({
-      "x-rapidapi-key": apiKey}),
-    mode: 'cors'
-  };
+const ghURL = 'https://api.github.com/users/'
 
-  fetch(url, options)
-    .then(response => response.json())
-    .then(responseJson => console.log(responseJson));
+function fetchURL(userURL) {
+  fetch(userURL)
+  .then(response => response.json())
+  .then(data => createList(data))
+  .catch(error => console.error(error));
 }
 
-$(getNews);
+function createList(data) {
+  $('#results').html(`<h2>Results:</h2>`)
+  for (let i=0; i < data.length; i++) {
+    $('#results').append(`<a href="${data[i].html_url}">${data[i].html_url}</a>`)
+  }
+}
+
+function makeURL(user) {
+  const userURL = ghURL + user + '/repos'
+  console.log(userURL)
+  fetchURL(userURL)
+}
+
+function watchInput() {
+  $('form').submit(event => {
+  event.preventDefault()
+  const user = $('#search').val()
+  console.log(user)
+  makeURL(user)
+  })
+}
+
+$(watchInput)
